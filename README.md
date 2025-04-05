@@ -254,21 +254,23 @@ protocols. You can define a Broker using the syntax in the following example:
 Broker<MQTT> upstairs_broker
     host: "localhost"
     port: 1883
+    version: "5.0"  # Optional, defaults to "3.1.1"
     auth:
         username: "my_username"
         password: "my_password"
 end
 ```
 
-- **type**: The first line can be `MQTT`, `AMQP` or `Redis` according to the Broker type
-- **host**: Host IP address or hostname for the Broker
-- **port**: Broker Port number
+- **type**: The first line can be `MQTT`, `AMQP`, or `Redis` according to the Broker type.
+- **host**: Host IP address or hostname for the Broker.
+- **port**: Broker Port number.
+- **version (Optional)**: MQTT protocol version (e.g., `"3.1.1"` or `"5.0"`). Only for MQTT brokers. Defaults to `"3.1.1"`.
 - **auth**: Authentication credentials. Unified for all communication brokers.
-  - **username**: Username used for authentication
-  - **password**: Password used for authentication
-- **vhost (Optional)**: Vhost parameter. Only for AMQP brokers
-- **vhost (Optional)**: Vhost parameter. Only for AMQP brokers
-- **topicExchange (Optional)**: (Optional) Exchange parameter. Only for AMQP brokers.
+
+  - **username**: Username used for authentication.
+  - **password**: Password used for authentication.
+- **vhost (Optional)**: Vhost parameter. Only for AMQP brokers.
+- **topicExchange (Optional)**: Exchange parameter. Only for AMQP brokers.
 - **rpcExchange (FUTURE SUPPORT)**: Exchange parameter. Only for AMQP brokers.
 - **db (Optional)**: Database number parameter. Only for Redis brokers.
 
@@ -554,7 +556,7 @@ The freq property can only be set only for sensor and robot Entities.
 ## Command-Line-Interface
 
 ```bash
-➜ smauto --help       
+➜ smauto --help     
 Usage: smauto [OPTIONS] COMMAND [ARGS]...
 
 Options:

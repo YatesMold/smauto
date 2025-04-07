@@ -3,6 +3,7 @@
 # If you are going to execute this in google colab, uncomment the next line
 # !pip install commlib-py==0.11.4
 
+import math
 import time
 import random
 from typing import Optional, Dict
@@ -81,6 +82,7 @@ class Entity(Node):
         self.conn_params = conn_params
         self.attributes = attributes
         self.msg_type = msg_type
+        self.virtual = virtual  
         self.attributes_dict = {key: val for key, val in self.attributes.items()}
         self.attributes_buff = {key: [] for key, _ in self.attributes.items()}
         self.dstate = self.msg_type()
@@ -641,3 +643,24 @@ if __name__ == '__main__':
         print("Interrupt detected. Exiting...")
         terminate_event.set()
         executor.stop()
+
+
+class {{ entity.name|capitalize }}:
+    def __init__(self):
+        {% for attribute in entity.attributes %}
+        self.{{ attribute.name }} = None
+        {% endfor %}
+
+    {% if entity.virtual %}
+    def generate_values(self):
+        {% for attribute in entity.attributes %}
+        {% if attribute.value_generator %}
+        self.{{ attribute.name }} = {{ attribute.value_generator }}
+        {% else %}
+        self.{{ attribute.name }} = 0  # Default safe value if no generator
+        {% endif %}
+        {% if attribute.noise_generator %}
+        self.{{ attribute.name }} += {{ attribute.noise_generator }}
+        {% endif %}
+        {% endfor %}
+    {% endif %}

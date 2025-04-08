@@ -70,7 +70,25 @@ class {{ entity.camel_name }}Msg(PubSubMessage):
     {% endif %}
     {% endfor %}
 
+class {{ entity.name|capitalize }}:
+    def __init__(self):
+        {% for attribute in entity.attributes %}
+        self.{{ attribute.name }} = None
+        {% endfor %}
 
+    {% if entity.virtual %}
+    def generate_values(self):
+        {% for attribute in entity.attributes %}
+        {% if attribute.value_generator %}
+        self.{{ attribute.name }} = {{ attribute.value_generator }}
+        {% else %}
+        self.{{ attribute.name }} = 0  # Default safe value if no generator
+        {% endif %}
+        {% if attribute.noise_generator %}
+        self.{{ attribute.name }} += {{ attribute.noise_generator }}
+        {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endfor %}
 class Entity(Node):
     def __init__(self, name, topic, conn_params,
@@ -644,23 +662,3 @@ if __name__ == '__main__':
         terminate_event.set()
         executor.stop()
 
-
-class {{ entity.name|capitalize }}:
-    def __init__(self):
-        {% for attribute in entity.attributes %}
-        self.{{ attribute.name }} = None
-        {% endfor %}
-
-    {% if entity.virtual %}
-    def generate_values(self):
-        {% for attribute in entity.attributes %}
-        {% if attribute.value_generator %}
-        self.{{ attribute.name }} = {{ attribute.value_generator }}
-        {% else %}
-        self.{{ attribute.name }} = 0  # Default safe value if no generator
-        {% endif %}
-        {% if attribute.noise_generator %}
-        self.{{ attribute.name }} += {{ attribute.noise_generator }}
-        {% endif %}
-        {% endfor %}
-    {% endif %}
